@@ -1,65 +1,430 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HomePage Test</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #f0f4ff, #dceeff);
-        color: #333;
-        display: flex;
-        min-height: 100vh;
-        align-items: center;
-        justify-content: center;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor AI デモサイト</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      main {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: #ffffffcc;
-        border-radius: 16px;
-        box-shadow: 0 20px 45px rgba(0, 32, 128, 0.1);
-      }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #fff;
+    }
 
+    /* パーティクル背景 */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: float 15s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(50px);
+        opacity: 0;
+      }
+    }
+
+    /* メインコンテナ */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* ヘッダー */
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, #fff, #e0e0e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 0.9; }
+    }
+
+    /* カードセクション */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      animation: slideInUp 0.8s ease-out;
+      animation-fill-mode: both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+    .card:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card:hover {
+      transform: translateY(-10px) scale(1.05);
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card p {
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    /* ボタン */
+    .btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(45deg, #ff6b6b, #ee5a6f);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 2rem 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      animation: none;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    }
+
+    /* モーダル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 10% auto;
+      padding: 3rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: slideDown 0.3s ease;
+      position: relative;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .close {
+      position: absolute;
+      right: 1.5rem;
+      top: 1.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .close:hover {
+      transform: rotate(90deg) scale(1.2);
+    }
+
+    .modal h2 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+
+    .modal p {
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    /* フッター */
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      opacity: 0.8;
+      margin-top: 3rem;
+    }
+
+    /* レスポンシブ */
+    @media (max-width: 768px) {
       h1 {
-        margin-bottom: 0.5rem;
         font-size: 2.5rem;
-        letter-spacing: 0.05em;
       }
+      
+      .cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .btn {
+        display: block;
+        margin: 1rem auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- パーティクル背景 -->
+  <div class="particles" id="particles"></div>
 
-      p {
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-        line-height: 1.6;
-      }
+  <div class="container">
+    <header>
+      <h1>🚀 Cursor AI デモ</h1>
+      <p class="subtitle">AIがコードを書く、未来の開発体験</p>
+    </header>
 
-      a {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        border-radius: 999px;
-        background: #3a7bfd;
-        color: #fff;
-        text-decoration: none;
-        font-weight: bold;
-        transition: background 0.3s ease, transform 0.3s ease;
-      }
+    <div class="cards">
+      <div class="card" onclick="openModal('modal1')">
+        <span class="card-icon">✨</span>
+        <h3>AI コード生成</h3>
+        <p>自然言語で説明するだけで、高品質なコードが自動生成されます。開発速度が劇的に向上します。</p>
+      </div>
 
-      a:hover {
-        background: #2c5fd6;
-        transform: translateY(-2px);
+      <div class="card" onclick="openModal('modal2')">
+        <span class="card-icon">🎨</span>
+        <h3>美しいUI作成</h3>
+        <p>モダンでレスポンシブなデザインを簡単に実現。アニメーションやエフェクトも自由自在です。</p>
+      </div>
+
+      <div class="card" onclick="openModal('modal3')">
+        <span class="card-icon">⚡</span>
+        <h3>高速開発</h3>
+        <p>繰り返し作業を自動化し、創造的な部分に集中できます。プロジェクトの完成時間を大幅に短縮。</p>
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <a href="#" class="btn" onclick="openModal('modal4'); return false;">詳細を見る</a>
+      <a href="https://cursor.sh" class="btn btn-secondary" target="_blank">Cursor を試す</a>
+    </div>
+
+    <footer>
+      <p>このサイトは Cursor AI で作成されました</p>
+    </footer>
+  </div>
+
+  <!-- モーダル1 -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal1')">&times;</span>
+      <h2>✨ AI コード生成</h2>
+      <p>Cursor の AI は、あなたの説明を理解して、適切なコードを生成します。関数、コンポーネント、スタイル、すべてを自然な会話で作成できます。</p>
+      <p><strong>例：</strong>「ログインフォームを作成して、バリデーションも追加して」と話しかけるだけで、完全なフォームが完成します。</p>
+    </div>
+  </div>
+
+  <!-- モーダル2 -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal2')">&times;</span>
+      <h2>🎨 美しいUI作成</h2>
+      <p>このサイトのように、アニメーション、グラデーション、モーダル、レスポンシブデザインなど、モダンなUI要素を簡単に実装できます。</p>
+      <p>CSS の知識がなくても、「カードをホバーで浮き上がらせて」と指示するだけで実現できます。</p>
+    </div>
+  </div>
+
+  <!-- モーダル3 -->
+  <div id="modal3" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal3')">&times;</span>
+      <h2>⚡ 高速開発</h2>
+      <p>繰り返し作業や定型コードの記述を AI に任せることで、開発時間を大幅に短縮できます。</p>
+      <p>バグ修正、リファクタリング、テストコードの作成など、あらゆる開発タスクを効率化します。</p>
+    </div>
+  </div>
+
+  <!-- モーダル4 -->
+  <div id="modal4" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('modal4')">&times;</span>
+      <h2>🚀 Cursor について</h2>
+      <p>Cursor は、AI を活用した次世代のコードエディタです。GitHub Copilot を超える機能と、直感的な操作で開発体験を革新します。</p>
+      <p><strong>主な特徴：</strong></p>
+      <ul style="line-height: 2; margin-left: 2rem;">
+        <li>自然言語でのコード生成</li>
+        <li>コンテキストを理解した提案</li>
+        <li>エラー修正の自動提案</li>
+        <li>コードレビューと改善提案</li>
+      </ul>
+      <p style="margin-top: 1.5rem;">
+        <a href="https://cursor.sh" class="btn" target="_blank" style="text-decoration: none; display: inline-block;">公式サイトへ</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // パーティクル生成
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 50;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particlesContainer.appendChild(particle);
       }
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>テストホームページへようこそ</h1>
-      <p>このページは最小限のテスト用ホームページです。</p>
-      <a href="#next">次のステップを見る</a>
-    </main>
-  </body>
+    }
+
+    // モーダル開く
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    // モーダル閉じる
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // モーダル外クリックで閉じる
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    // ESCキーでモーダル閉じる
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+          if (modal.style.display === 'block') {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+          }
+        });
+      }
+    });
+
+    // 初期化
+    createParticles();
+  </script>
+</body>
 </html>
-
-
